@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <title class="center">Bitcoin Wallet</title>
+   
+</head>
+
+<style>
+    html, body {
+        margin: 0;
+    }
+    
+    body{
+        background-image: url('/static/itu_library.jpg') ;
+        background-size: 100%; 
+    }
+    footer{
+        position: fixed;
+        opacity:0.8;
+        color:ghostwhite;
+        height: 30px;
+        bottom: 0px;
+        width: 100%;
+        text-align: center;
+        z-index: -2;
+    } 
+   
+</style>
+<header> 
+    <div>
+        <a href="/" class="ignore-css"><img src="/static/ITU_LOGO.png" width="160" height="45" style="float:left; margin-left: 10px; margin-right: 50px;"></a>
+    </div>
+   </header>
+    
+<body> 
+    <div>
+    <ul>
+        <li><a>Wallet</a></li>
+        <li><a>Transactions</a></li>
+    </ul>
+    </div>  
+    <div>{% block content %}{% endblock content %}</div>
+</body>
+
+<footer>
+    © 2020:
+        <a href="{{url_for('home_page') }}"> Ece Nur ŞEN and Joshgun RZABAYLI</a>
+</footer>
+</html>
