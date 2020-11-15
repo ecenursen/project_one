@@ -1,12 +1,24 @@
 {% extends "layout.html" %} {% block title %}Wallet{% endblock %} {% block content %}
 
-<div class="container">
+<form method="POST" action="/maketrans">
+    <div class="container">
+        <h1>Create New Transaction</h1>
         <a style="font-size:large ;"> Dear {{username}}</a>
-</div>
-<div class="container">
-    <a style="font-size:large ;"> Your current balance is : {{balance}}</a>
-</div>
+        <a style="font-size:large ;"> Your current balance is : {{balance}}</a>   
 
+        <hr>
+        <label for="address"><b>Reciever Address</b></label>
+        <input type="text" placeholder="Enter the Reciever Address" name="address" id="address" required>
+
+        <label for="sendvalue"><b>Amount</b></label>
+        <input type="number" placeholder="Enter the Amount" name="sendvalue" id="sendvalue" required>
+
+        <label for="fee"><b>Fee</b></label>
+        <input type="number" placeholder="Enter the Transaction Fee(optional)" name="fee" id="fee" value="0">
+        <hr>
+
+        <input type="submit" class="registerbtn"></input>
+    </div>
 
 </form>
 {% endblock content %}

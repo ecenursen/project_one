@@ -4,7 +4,7 @@ import requests
 import pyrebase
 from dbinit import db, auth
 from firebase import firebase
-from bitcoin_func import LoadWallet,UnloadWallet,CreateWallet,GetAddressofWallet,GetPrivKey,RPC_GetBalance
+from bitcoin_func import *
 
 person = {"logged_in": False, "name": "", "username": "", "password": "", "address":"", "private key":"" }
 
@@ -81,6 +81,24 @@ def recent_blocks():
 
 @app.route('/maketrans',methods=['GET','POST'])
 def make_trans():
+    
+    result = request.form
+    if request.method == "POST":
+        address = result["address"]
+        receiverAddress = session["address"]
+        sendValue = float(result["sendvalue"])
+        fee = float(result["fee"])
+        if(fee != 0.0):
+            newTransAnswer = MakeTrans(address,receiverAddress,sendValue,fee)
+        else:
+            newTransAnswer = MakeTrans(address,receiverAddress,sendValue)
+        if newTransAnswer['RESPONSE'] == 'SUCCESS':
+            print("Transaction is Successfull")
+            return redirect(url_for('home_page'))
+        else:
+            print(newTransAnswer['ERROR'])
+            return redirect(url_for('make_trans'))
+
     balance_answer = RPC_GetBalance()
     if balance_answer['RESPONSE'] == 'SUCCESS':
         curr_balance = balance_answer['RESULT']
@@ -151,17 +169,11 @@ def login_submit():
                 else:
                     
                     session["logged_in"] = True
-                    print("PASSED1")
                     session["username"] = db.child("users").child(username).get().val()["Username"]
-                    print("PASSED2")
                     session["name"] = db.child("users").child(username).get().val()["Name"]
-                    print("PASSED3")
                     session["address"] = db.child("users").child(username).get().val()["Address"]
-                    print("PASSED4")
                     session["pvkey"] = db.child("users").child(username).get().val()["Private Key"]
-                    print("PASSED5")
                     session["walletname"] = db.child("users").child(username).get().val()["Wallet Name"]
-                    print("PASSED6")
                     print(session)   
                     wallet_answer = LoadWallet(session['walletname'])
                     if wallet_answer['RESPONSE'] != 'SUCCESS':
@@ -186,4 +198,4 @@ def logout():
     return redirect(url_for('home_page'))
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
