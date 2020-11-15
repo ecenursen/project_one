@@ -4,7 +4,7 @@ import requests
 import pyrebase
 from dbinit import db, auth
 from firebase import firebase
-
+from bitcoin_func import LoadWallet,UnloadWallet,CreateWallet,GetAddressofWallet,GetPrivKey,RPC_GetBalance
 
 person = {"logged_in": False, "name": "", "username": "", "password": "", "address":"", "private key":"" }
 
@@ -69,35 +69,36 @@ def register_submit():
         password = result["psw"]
         name = result["name"]
 
-        # Creating the address for new user
-        getAddress = {"jsonrpc": "1.0", "id": "curltest",
-                      "method": "getnewaddress", "params": []}
-        resAddress = requests.post(url_regtest, json=getAddress, auth=auth_regtest)
-        address = resAddress.json()["result"]
-        
-        # Getting the private key value from the address
-        getPVKey = {"jsonrpc": "1.0", "id": "curltest",
-                    "method": "dumpprivkey", "params": [address]}
-        resPVKey = requests.post(url_regtest, json=getPVKey, auth=auth_regtest)
-        PVKey = resPVKey.json()["result"]
-        try:
-            if(db.child("users").child(username).get().val() == None):
-                db.child("users").child(username).set({"Name": name, "Username": username, "Password": password, "Address":address, "Wallet Name":("Wallet"+username), "Private Key":PVKey})
-                session["logged_in"] = True
-                session["username"] = username
-                session["name"] = name
-                session["address"] = address
-                session["walletname"] = "Wallet" + username
-                print(session)
+        wallet_answer = CreateWallet("Wallet"+username)
+        if wallet_answer['RESPONSE'] == 'SUCCESS':
+            address_answer = GetAddressofWallet()
+            if address_answer['RESPONSE'] == 'SUCCESS':
+                privkey_answer = GetPrivKey(address_answer['RESULT'])
+                if privkey_answer['RESPONSE'] == 'SUCCESS':
+                    try:
+                        if(db.child("users").child(username).get().val() == None):
+                            db.child("users").child(username).set({"Name": name, "Username": username, "Password": password, "Address":address_answer['RESULT'], "Wallet Name":("Wallet"+username), "Private Key":privkey_answer['RESULT']})
+                            session["logged_in"] = True
+                            session["username"] = username
+                            session["name"] = name
+                            session["address"] = address_answer['RESULT']
+                            session["walletname"] = "Wallet" + username
+                            print(session)
             # address
             # wallet name
             # private key
-                session['logged_in'] = True
-                return redirect(url_for('home_page'))
+                            session['logged_in'] = True
+                            return redirect(url_for('home_page'))
+                        else:
+                            flash('The username exists, please try another one', 'danger')
+                    except:
+                        return redirect(url_for('register'))
+                else:
+                    print(privkey_answer['ERROR'])
             else:
-                flash('The username exists, please try another one', 'danger')
-        except:
-            return redirect(url_for('register'))
+                print(address_answer['ERROR'])
+        else:
+            print(wallet_answer['ERROR'])
     else:
         if session["logged_in"] == True:
             return redirect(url_for('home_page'))
@@ -132,7 +133,10 @@ def login_submit():
                     print("PASSED5")
                     session["walletname"] = db.child("users").child(username).get().val()["Wallet Name"]
                     print("PASSED6")
-                    print(session)          
+                    print(session)   
+                    wallet_answer = LoadWallet(session['walletname'])
+                    if wallet_answer['RESPONSE'] != 'SUCCESS':
+                        print("Login Error: ",wallet_answer['ERROR'])
                     return redirect(url_for('home_page'))
         except:
             return redirect(url_for('login'))
@@ -146,6 +150,9 @@ def login_submit():
 # Route to Login Page
 @app.route('/logout')
 def logout():
+    wallet_answer = UnloadWallet(session['walletname'])
+    if wallet_answer['RESPONSE'] != 'SUCCESS':
+        print("Logout Error: ",wallet_answer['ERROR'])
     session['logged_in'] = None
     return redirect(url_for('home_page'))
 

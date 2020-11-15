@@ -40,13 +40,13 @@ def UnloadWallet(walletname):
 def CreateWallet(walletname):
     RPC_response = requests.post(curr_url, json=Create_RPC_dict("createwallet",[walletname]),auth=curr_auth).json()
     if RPC_response["error"]==None:
-        return {"RESPONSE": "SUCCESS", "RESULT":: "Wallet successfully created"}
+        return {"RESPONSE": "SUCCESS", "RESULT": "Wallet successfully created"}
     else:
         return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]["message"]}
 
 #function for creating a new address for wallet
 def GetAddressofWallet():
-    RPC_response = requests.post(curr_url, json=Create_RPC_dict("getaddress"),auth=curr_auth).json()
+    RPC_response = requests.post(curr_url, json=Create_RPC_dict("getnewaddress"),auth=curr_auth).json()
     if RPC_response["error"]==None:
         return {"RESPONSE": "SUCCESS", "RESULT":RPC_response["result"]}
     else:
@@ -153,7 +153,7 @@ def Get_Recent_Blocks(count):
                     block_info['validity'] = "Validity Waiting"
                 block_info['time'] = datetime.utcfromtimestamp(current_block['time']).strftime('%Y-%m-%d %H:%M:%S')
                 block_info['trans_no'] = current_block['nTx']
-                block_hash = block_info['previousblockhash]
+                block_hash = block_info['previousblockhash']
                 blocks.append(block_info)
             else:
                 return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]}
