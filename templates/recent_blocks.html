@@ -1,9 +1,28 @@
-{% extends "layout.html" %} {% block title %}Recent Blocks{% endblock %} {% block content %}
+{% extends "layout.html" %} {% block title %}Transactions{% endblock %} {% block content %}
 
 <div class="container">
-        <a style="font-size:large ;"> The Recent Blocks Are Displayed Below. </a>
+        <a style="font-size:x-large ;"> Here are the recent proposed blocks on the network</a>
 </div>
-
+<div class="container">
+    <table style="width:100%">
+        <tr>
+          <th>Hash</th>
+          <th>Time</th> 
+          <th>Total Number Of Transaction</th> 
+          <th>Validity</th>
+          <th>Confimation</th>
+        </tr>
+        {% for item in blocks %}
+            <tr>
+                <th>{{ item['hash'] }}</th>
+                <th>{{ item['time'] }}</th>
+                <th>{{ item['trans_no'] }}</th>
+                <th>{{ item['validity'] }}</th>
+                <th>{{ item['confirmations'] }}</th>
+            </tr>
+        {% endfor%}
+      </table>
+</div>
 
 </form>
 {% endblock content %}

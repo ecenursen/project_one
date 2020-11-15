@@ -4,7 +4,7 @@ import requests
 import pyrebase
 from dbinit import db, auth
 from firebase import firebase
-from bitcoin_func import LoadWallet,UnloadWallet,CreateWallet,GetAddressofWallet,GetPrivKey,RPC_GetBalance
+from bitcoin_func import LoadWallet,UnloadWallet,CreateWallet,GetAddressofWallet,GetPrivKey,RPC_GetBalance,MakeTrans,Get_Recent_Blocks,GetUserTransactions
 
 person = {"logged_in": False, "name": "", "username": "", "password": "", "address":"", "private key":"" }
 
@@ -65,7 +65,8 @@ def login():
 def wallet_info():
     balance_answer = RPC_GetBalance()
     if balance_answer['RESPONSE'] == 'SUCCESS':
-        curr_balance = balance_answer['RESULT']
+        curr_balance = float(balance_answer['RESULT'])
+        curr_balance = '{:20f}'.format(curr_balance)
     else:
         print("Balance Error: ", balance_answer['ERROR'])
 
@@ -73,11 +74,22 @@ def wallet_info():
 
 @app.route('/mytrans',methods=['GET'])
 def trans_history():
-    return render_template("mytransaction_page.html",username=session["username"])
+    trans_answer = GetUserTransactions(session['address'])
+    if trans_answer['RESPONSE'] == 'SUCCESS':
+        transes = trans_answer['RESULT']
+    else:
+        print("Recent Block Error: ", trans_answer['ERROR'])
+    
+    return render_template("mytransaction_page.html",username=session["username"],transactions=transes[::-1])
 
 @app.route('/recentblocks',methods=['GET'])
 def recent_blocks():
-    return render_template("recent_blocks.html")
+    block_answer = Get_Recent_Blocks(100)
+    if block_answer['RESPONSE'] == 'SUCCESS':
+        blocks = block_answer['RESULT']
+    else:
+        print("Recent Block Error: ", block_answer['ERROR'])
+    return render_template("recent_blocks.html",blocks=blocks)
 
 @app.route('/maketrans',methods=['GET','POST'])
 def make_trans():

@@ -153,7 +153,7 @@ def Get_Recent_Blocks(count):
                     block_info['validity'] = "Validity Waiting"
                 block_info['time'] = datetime.utcfromtimestamp(current_block['time']).strftime('%Y-%m-%d %H:%M:%S')
                 block_info['trans_no'] = current_block['nTx']
-                block_hash = block_info['previousblockhash']
+                block_hash = current_block['previousblockhash']
                 blocks.append(block_info)
             else:
                 return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]}
@@ -188,10 +188,6 @@ def GetUserTransactions(user_addr):
             else:
                 temp_trans['from'] =user_addr
                 temp_trans['to'] = trans['address']
-            if trans['fee'] != None:
-                temp_trans['fee'] = trans['fee']
-            else:
-                temp_trans['fee'] = 0
             temp_trans['amount'] = trans['amount']
             temp_trans['confirmations'] = trans['confirmations']
             if temp_trans['confirmations'] >= 6:

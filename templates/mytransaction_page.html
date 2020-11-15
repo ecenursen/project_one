@@ -1,9 +1,32 @@
 {% extends "layout.html" %} {% block title %}Transactions{% endblock %} {% block content %}
 
 <div class="container">
-        <a style="font-size:large ;"> Dear {{username}}</a>
+        <a style="font-size:large ;"> Dear {{username}} here is you transaction history</a>
 </div>
-
+<div class="container">
+    <table style="width:100%">
+        <tr>
+          <th>Transaction ID</th>
+          <th>Time</th> 
+          <th>From</th> 
+          <th>To</th>
+          <th>Amount</th>
+          <th>Validity</th> 
+          <th>Confimation</th>
+        </tr>
+        {% for item in transactions %}
+            <tr>
+                <th>{{ item['trans_id'] }}</th>
+                <th>{{ item['time'] }}</th>
+                <th>{{ item['from'] }}</th>
+                <th>{{ item['to'] }}</th>
+                <th>{{ item['amount'] }}</th>
+                <th>{{ item['validity'] }}</th>
+                <th>{{ item['confirmations'] }}</th>
+            </tr>
+        {% endfor%}
+      </table>
+</div>
 
 </form>
 {% endblock content %}
