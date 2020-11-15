@@ -1,22 +1,25 @@
 {% extends "layout.html" %} {% block title %}Wallet{% endblock %} {% block content %}
 
 <div class="container">
-        <a style="font-size:large ;"> Dear {{username}}</a>
+        <a style="font-size:large ;"> Dear </a>
+        <a style="color:black; font-size:large ;">{{username}} </a>
+</div>
+<div class="container" >
+    <a style="font-size:large ;"> Your Address is: </a>
+    <a style="color:black; font-size:large ;"> {{addr}}</a>
 </div>
 <div class="container">
-    <a style="font-size:large ;"> Your Address is: {{addr}}</a>
-</div>
-<div class="container">
-    <a style="font-size:large ;"> Your current balance is : {{balance}}</a>
+    <a style="font-size:large ;"> Your current balance is : </a>
+    <a style="color:black; font-size:large ;"> {{balance}}</a>
 </div>
 <div class="container">
     <a style="font-size:large ;"> You can make transaction by clicking</a>
-    <a href= "{{ url_for('make_trans')}}">HERE</a>
+    <a style="color:black; font-size:large ;" href= "{{ url_for('make_trans')}}">HERE</a>
 </div>
 
 <div class="container">
     <a style="font-size:large ;"> You can see your past transactions through</a>
-    <a href="{{ url_for('trans_history')}}" >HERE</a>
+    <a style="color:black; font-size:large ;" href="{{ url_for('trans_history')}}" >HERE</a>
 </div>
 
 </form>

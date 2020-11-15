@@ -1,11 +1,12 @@
 {% extends "layout.html" %} {% block title %}Transactions{% endblock %} {% block content %}
 
-<div class="container">
-        <a style="font-size:x-large ;"> Here are the recent proposed blocks on the network</a>
+<div style="background-color: burlywood; margin-left: 20px; width: max-content;">
+        <a style="font-size:x-large; color: black;"> Here are the recent proposed blocks on the network</a>
 </div>
-<div class="container">
-    <table style="width:100%">
-        <tr>
+
+<div style="background-color: #d4a05f; margin-left: 20px; width: fit-content;">
+    <table style="width:max-content">
+        <tr style="color: black; background-color:#d9ac73;">
           <th>Hash</th>
           <th>Time</th> 
           <th>Total Number Of Transaction</th> 
@@ -13,7 +14,7 @@
           <th>Confimation</th>
         </tr>
         {% for item in blocks %}
-            <tr>
+            <tr style=" background-color:burlywood;">
                 <th>{{ item['hash'] }}</th>
                 <th>{{ item['time'] }}</th>
                 <th>{{ item['trans_no'] }}</th>

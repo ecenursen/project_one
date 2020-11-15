@@ -111,6 +111,7 @@ def RPC_CreateRawTransaction(sendaddr,sendvalue,myaddr=0,returnvalue=0):
         return list_unspent["ERROR"]  
 
 #function to Make Transaction
+#returns the transaction id of newly created transaction if successfull
 def MakeTrans(myaddr,sendaddr,sendvalue,fee=0):
     curr_balance = RPC_GetBalance()
     returnval = 0
@@ -188,7 +189,7 @@ def GetUserTransactions(user_addr):
             else:
                 temp_trans['from'] =user_addr
                 temp_trans['to'] = trans['address']
-            temp_trans['amount'] = trans['amount']
+            temp_trans['amount'] = '{:20f}'.format(trans['amount'])
             temp_trans['confirmations'] = trans['confirmations']
             if temp_trans['confirmations'] >= 6:
                 temp_trans['validity'] = "Valid Block"
