@@ -75,6 +75,10 @@ def wallet_info():
 def trans_history():
     return render_template("mytransaction_page.html",username=session["username"])
 
+@app.route('/recentblocks',methods=['GET'])
+def recent_blocks():
+    return render_template("recent_blocks.html")
+
 @app.route('/maketrans',methods=['GET','POST'])
 def make_trans():
     balance_answer = RPC_GetBalance()
