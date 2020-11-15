@@ -1,7 +1,33 @@
 {% extends "layout.html" %} 
 {% block content %}
-<form action="/getaddr/" method="POST">
+<nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent" id="itunom-nav">
+    <div class="container">
+        <div id="my-nav" class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                {% if session.get('logged_in') != None %}
+                    <li class="nav-item"><a class="nav-link">Home</a></li>
+                    <li class="nav-item"><a class="nav-link">Wallet Information</a></li>
+                    <li class="nav-item"><a class="nav-link">Transaction</a></li>
+                    <li class="nav-item"><a class="nav-link">My Transactions</a></li>
+                    <li class="nav-item"><a class="nav-link">New Transaction</a></li>
+                {% endif %}
+            </ul>
+            <div id="logging-button">
+                {% if session.get('logged_in') == None %}
+                <form class="form-inline my-2 my-lg-0">
+                    <a href="{{ url_for('register') }}"
+                        class="btn btn-outline-dark my-2 my-sm-0 mr-3 text-uppercase">sign up/login</a>
+                </form>
+                {% else %}
+                <form class="form-inline my-2 my-lg-0">
+                    <a href="{{ url_for('logout')}}"
+                        class="btn btn-outline-dark my-2 my-sm-0 mr-3 text-uppercase">logout</a>
+                </form>
+                {% endif %}
+            </div>
+        </div>
 
-    <button type="submit" class="btn btn-primary">Get Address</button>
-  </form>
+    </div>
+</nav>
+
 {% endblock content %}
