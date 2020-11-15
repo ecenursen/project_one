@@ -165,6 +165,7 @@ def Get_Recent_Blocks(count):
 #Successful return gives this the structure below
 # [
 #   { 
+#     'trans_id' : "transaction id"
 #     'from': "who created this transaction",
 #     'to': "sent address of transaction",
 #     'amount' : "amount that sent",
@@ -180,6 +181,7 @@ def GetUserTransactions(user_addr):
     if RPC_response["error"]==None:
         for trans in RPC_response["result"]:
             temp_trans = {}
+            temp_trans['trans_id'] = trans['txid']
             if trans['category'] == 'receive':
                 temp_trans['from'] = trans['address']
                 temp_trans['to'] = user_addr
