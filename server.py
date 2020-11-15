@@ -93,19 +93,21 @@ def recent_blocks():
 
 @app.route('/maketrans',methods=['GET','POST'])
 def make_trans():
-    
     result = request.form
     if request.method == "POST":
-        address = result["address"]
-        receiverAddress = session["address"]
+        receiverAddress= result["address"]
+        address = session["address"]
         sendValue = float(result["sendvalue"])
         fee = float(result["fee"])
+        if fee < 0.00001:
+            fee = 0.00001
         if(fee != 0.0):
             newTransAnswer = MakeTrans(address,receiverAddress,sendValue,fee)
         else:
             newTransAnswer = MakeTrans(address,receiverAddress,sendValue)
         if newTransAnswer['RESPONSE'] == 'SUCCESS':
             print("Transaction is Successfull")
+            print("txid:",newTransAnswer['RESULT'])
             return redirect(url_for('home_page'))
         else:
             print(newTransAnswer['ERROR'])
@@ -114,6 +116,7 @@ def make_trans():
     balance_answer = RPC_GetBalance()
     if balance_answer['RESPONSE'] == 'SUCCESS':
         curr_balance = balance_answer['RESULT']
+        curr_balance = '{:20f}'.format(curr_balance)
     else:
         print("Balance Error: ", balance_answer['ERROR'])
 

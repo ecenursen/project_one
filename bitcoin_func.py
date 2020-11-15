@@ -80,7 +80,7 @@ def ListUnspent():
 def SendRawTransaction(signedhex):
     RPC_response = requests.post(curr_url, json=Create_RPC_dict("sendrawtransaction",[signedhex]),auth=curr_auth).json()
     if RPC_response["error"]==None:
-        return {"RESPONSE": "SUCCESS", "txid":RPC_response["result"]}
+        return {"RESPONSE": "SUCCESS", "RESULT":RPC_response["result"]}
     else:
         return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]}
 
@@ -88,7 +88,7 @@ def SendRawTransaction(signedhex):
 def SignRawTransaction(transhex):
     RPC_response = requests.post(curr_url, json=Create_RPC_dict("signrawtransactionwithwallet",[transhex]),auth=curr_auth).json()
     if RPC_response["error"]==None:
-        return SendRawTransaction(RPC_response["result"])
+        return SendRawTransaction(RPC_response["result"]["hex"])
     else:
         return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]}
 
@@ -97,12 +97,14 @@ def RPC_CreateRawTransaction(sendaddr,sendvalue,myaddr=0,returnvalue=0):
     list_unspent = ListUnspent() #get unspent amounts
     if list_unspent["RESPONSE"] != "ERROR": # if any problems reaching unspent values
         input_trans = list_unspent["RESULT"]
-        if myaddr == 0 :
-            output_trans = '{'+f'{sendaddr}:{sendvalue}' + '}'
-        else:
-            output_trans = '[{'+f'{sendaddr}:{sendvalue}' + '},' + '{'+f'{myaddr}:{returnvalue}' + '}]'
-        print("CREATERAWTRANS-myparams:",[input_trans,output_trans])
-        RPC_response = requests.post(curr_url, json=Create_RPC_dict("createrawtransaction",[input_trans,output_trans]),auth=curr_auth).json()
+        output_trans = {}
+        output_trans[sendaddr] = sendvalue
+        if myaddr != 0 :
+            output_trans[myaddr] = returnvalue
+        params = []
+        params.append(input_trans)
+        params.append(output_trans)
+        RPC_response = requests.post(curr_url, json=Create_RPC_dict("createrawtransaction",params),auth=curr_auth).json()
         if RPC_response["error"]==None: 
             return SignRawTransaction(RPC_response["result"])
         else:
@@ -119,11 +121,15 @@ def MakeTrans(myaddr,sendaddr,sendvalue,fee=0):
         curr_balance = curr_balance['RESULT']
         if curr_balance >= (sendvalue+fee) or curr_balance >= sendvalue: # to check whether balance is sufficient or not
             if curr_balance >= (sendvalue+fee): # to check whether send value + fee is sufficient, if not change fee accordingly
+                returnval = curr_balance - (sendvalue+fee)
+            else:
                 returnval = curr_balance - sendvalue
-            return { 'RESPONSE': "SUCCESS", "RESULT": RPC_CreateRawTransaction(sendaddr,sendvalue,myaddr,returnval)}
+            returnval = float("{:.10f}".format(returnval))
+            return RPC_CreateRawTransaction(sendaddr,sendvalue,myaddr,returnval)
         else:
             return {"RESPONSE": "ERROR","ERROR": "Balance is insufficient"}
     else: 
+        print("here2")
         return curr_balance
 
 #function that returns n Recent Blocks, n is spesify by "count"
@@ -162,13 +168,13 @@ def Get_Recent_Blocks(count):
     else:
         return {"RESPONSE": "ERROR", "ERROR":RPC_response["error"]}
 
+
 #function for listing all transactions made from wallet
 #Successful return gives this the structure below
 # [
 #   { 
 #     'trans_id' : "transaction id"
-#     'from': "who created this transaction",
-#     'to': "sent address of transaction",
+#     'status': "either receive or sent"
 #     'amount' : "amount that sent",
 #     'confirmations' : "total number of confirmation it gets",
 #     'validity' : "Validity of block that transaction is in",
@@ -183,19 +189,15 @@ def GetUserTransactions(user_addr):
         for trans in RPC_response["result"]:
             temp_trans = {}
             temp_trans['trans_id'] = trans['txid']
-            if trans['category'] == 'receive':
-                temp_trans['from'] = trans['address']
-                temp_trans['to'] = user_addr
-            else:
-                temp_trans['from'] =user_addr
-                temp_trans['to'] = trans['address']
+            temp_trans['status'] = trans['category'] 
             temp_trans['amount'] = '{:20f}'.format(trans['amount'])
             temp_trans['confirmations'] = trans['confirmations']
             if temp_trans['confirmations'] >= 6:
                 temp_trans['validity'] = "Valid Block"
             else: 
                 temp_trans['validity'] = "Validity Waiting"
-            temp_trans['block'] = trans['blockhash']
+            if "blockhash" in trans.keys():
+                temp_trans['block'] = trans['blockhash']
             temp_trans['time'] = datetime.utcfromtimestamp(trans['time']).strftime('%Y-%m-%d %H:%M:%S')
             usr_transactions.append(temp_trans)
         return{"RESPONSE": "SUCCESS", "RESULT": usr_transactions}
