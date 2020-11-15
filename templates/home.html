@@ -1,17 +1,29 @@
 {% extends "layout.html" %} 
 {% block content %}
 <nav class="navbar navbar-expand-lg navbar-light bg-light bg-transparent" id="itunom-nav">
-    <div class="container">
-        <div id="my-nav" class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                {% if session.get('logged_in') != None %}
+    {% if session.get('logged_in') != None %}
+        <div class="container-register">
+            <div id="my-nav" class="collapse navbar-collapse">
+                <ul class="navbar-nav mr-auto">                  
                     <li class="nav-item"><a class="nav-link">Home</a></li>
                     <li class="nav-item"><a class="nav-link">Wallet Information</a></li>
                     <li class="nav-item"><a class="nav-link">Transaction</a></li>
                     <li class="nav-item"><a class="nav-link">My Transactions</a></li>
                     <li class="nav-item"><a class="nav-link">New Transaction</a></li>
-                {% endif %}
-            </ul>
+                </ul>
+                <div class="container d-flex justify-content-center" style = "position:absolute;left:500px;top:120px">
+                    <div class="card p-3">                
+                        <div class="card-bottom pt-3 px-3 mb-2">
+                            <div class="d-flex flex-row justify-content-between text-align-center">
+                                <div class="d-flex flex-column"  style = "position:relative;left:10px"><span>Balance amount</span>
+                                    <p>&#8383; <span class="text-white">88,989</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+    {% endif %}
             <div id="logging-button">
                 {% if session.get('logged_in') == None %}
                 <form class="form-inline my-2 my-lg-0">
@@ -26,8 +38,11 @@
                 {% endif %}
             </div>
         </div>
-
     </div>
+{% if session.get('logged_in') != None %}
+    
+{% endif %}
 </nav>
+
 
 {% endblock content %}

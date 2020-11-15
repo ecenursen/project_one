@@ -4,6 +4,7 @@ import requests
 import pyrebase
 from dbinit import db, auth
 from firebase import firebase
+from bitcoin_func import *
 
 
 person = {"logged_in": False, "name": "", "username": "", "password": "", "address":"", "private key":"" }
@@ -29,6 +30,10 @@ auth_regtest = ('admin','admin')
 # Home page route
 @app.route("/" ,methods=["GET","POST"])
 def home_page():
+    if(session["logged_in"] != None):
+        loadWalletRes = LoadWallet(session["walletname"])
+        walletBalance = RPC_GetBalance()
+    
     return render_template("home.html")
 
 
@@ -68,18 +73,28 @@ def register_submit():
         username = result["username"]
         password = result["psw"]
         name = result["name"]
-
+        print("PASSED1")
         # Creating the address for new user
-        getAddress = {"jsonrpc": "1.0", "id": "curltest",
-                      "method": "getnewaddress", "params": []}
-        resAddress = requests.post(url_regtest, json=getAddress, auth=auth_regtest)
-        address = resAddress.json()["result"]
-        
+        getAddress = GetAddressofWallet()
+        print(getAddress)
+        if (getAddress["RESPONSE"] == "ERROR"):
+            flash("Couldn't create a new Address")
+            return redirect(url_for('register'))
+        address = getAddress["RESULT"]
+
         # Getting the private key value from the address
-        getPVKey = {"jsonrpc": "1.0", "id": "curltest",
-                    "method": "dumpprivkey", "params": [address]}
-        resPVKey = requests.post(url_regtest, json=getPVKey, auth=auth_regtest)
-        PVKey = resPVKey.json()["result"]
+        getPVKey = GetPrivKey(address)
+        if (getPVKey["RESPONSE"] == "ERROR"):
+            flash("Couldn't create a Private Key for a given address")
+            return redirect(url_for('register'))
+        PVKey = getPVKey["RESULT"]
+        print("PASSED3")
+        # Creating Wallet
+        walletCreating = CreateWallet("Wallet" + username)
+        if (walletCreating["RESPONSE"] == "ERROR"):
+            flash("Couldn't create a Wallet")
+            return redirect(url_for('register'))
+        print("PASSED4")
         try:
             if(db.child("users").child(username).get().val() == None):
                 db.child("users").child(username).set({"Name": name, "Username": username, "Password": password, "Address":address, "Wallet Name":("Wallet"+username), "Private Key":PVKey})
@@ -150,4 +165,4 @@ def logout():
     return redirect(url_for('home_page'))
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
