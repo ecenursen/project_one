@@ -60,6 +60,31 @@ def register():
 def login():
     return render_template("login_page.html")
 
+# Route to Wallet Information Page
+@app.route('/mywallet',methods=['GET'])
+def wallet_info():
+    balance_answer = RPC_GetBalance()
+    if balance_answer['RESPONSE'] == 'SUCCESS':
+        curr_balance = balance_answer['RESULT']
+    else:
+        print("Balance Error: ", balance_answer['ERROR'])
+
+    return render_template("wallet_info.html",balance=curr_balance,username=session["username"],addr=session["address"])
+
+@app.route('/mytrans',methods=['GET'])
+def trans_history():
+    return render_template("mytransaction_page.html",username=session["username"])
+
+@app.route('/maketrans',methods=['GET','POST'])
+def make_trans():
+    balance_answer = RPC_GetBalance()
+    if balance_answer['RESPONSE'] == 'SUCCESS':
+        curr_balance = balance_answer['RESULT']
+    else:
+        print("Balance Error: ", balance_answer['ERROR'])
+
+    return render_template("create_transaction.html",balance=curr_balance,username=session["username"])
+
 # Submit the register form
 @app.route('/registersubmit', methods=['GET', 'POST'])
 def register_submit():

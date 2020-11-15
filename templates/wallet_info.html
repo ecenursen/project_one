@@ -1,0 +1,23 @@
+{% extends "layout.html" %} {% block title %}Wallet{% endblock %} {% block content %}
+
+<div class="container">
+        <a style="font-size:large ;"> Dear {{username}}</a>
+</div>
+<div class="container">
+    <a style="font-size:large ;"> Your Address is: {{addr}}</a>
+</div>
+<div class="container">
+    <a style="font-size:large ;"> Your current balance is : {{balance}}</a>
+</div>
+<div class="container">
+    <a style="font-size:large ;"> You can make transaction by clicking</a>
+    <a href= "{{ url_for('make_trans')}}">HERE</a>
+</div>
+
+<div class="container">
+    <a style="font-size:large ;"> You can see your past transactions through</a>
+    <a href="{{ url_for('trans_history')}}" >HERE</a>
+</div>
+
+</form>
+{% endblock content %}
