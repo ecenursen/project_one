@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}Login Page{% endblock %}
+{% block content %}
+<form class = "login-form" method="POST" action ="/loginsubmit">
+  <div class="container">
+    <h1>Login</h1>
+    <p>Enter your credentials.</p>
+    <hr>
+
+    <label for="username"><b>Username</b></label>
+    <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+    <label for="password"><b>Password</b></label>
+    <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+
+    <hr>
+
+    <input type="submit" class="registerbtn"></input>
+    <p>Don't have an account? <a href="{{ url_for('register') }}" style="color:blue; font-size: large;">Register</a>.</p>
+  </div>
+  
+</form>
+{% endblock content %}

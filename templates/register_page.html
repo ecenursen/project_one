@@ -1,0 +1,25 @@
+{% extends "layout.html" %} {% block title %}Register Page{% endblock %} {% block content %}
+<form method="POST" action="/registersubmit">
+    <div class="container">
+        <h1>Register</h1>
+        <p>Already have an account? <a href="{{ url_for('login') }}" style="color:blue; font-size: large;">Sign in</a>.</p>
+        <p>Please fill in this form to create an account.</p>
+        <hr>
+
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" id="username" required>
+
+        <label for="name"><b>Name</b></label>
+        <input type="text" placeholder="Enter Name" name="name" id="name" required>
+
+        <label for="password"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+        <hr>
+
+        <p>By creating an account you agree to our <a href="#">Terms & Privacy</a>.</p>
+        <input type="submit" class="registerbtn"></input>
+    </div>
+
+
+</form>
+{% endblock content %}
