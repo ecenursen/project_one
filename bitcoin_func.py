@@ -124,12 +124,11 @@ def MakeTrans(myaddr,sendaddr,sendvalue,fee=0):
                 returnval = curr_balance - (sendvalue+fee)
             else:
                 returnval = curr_balance - sendvalue
-            returnval = float("{:.10f}".format(returnval))
+            returnval = float("{:.10f}".format(returnval)) # to have float which has 10 number after point
             return RPC_CreateRawTransaction(sendaddr,sendvalue,myaddr,returnval)
         else:
             return {"RESPONSE": "ERROR","ERROR": "Balance is insufficient"}
     else: 
-        print("here2")
         return curr_balance
 
 #function that returns n Recent Blocks, n is spesify by "count"
@@ -154,7 +153,8 @@ def Get_Recent_Blocks(count):
                 block_info = {}
                 block_info['hash'] = current_block['hash']
                 block_info['confirmations'] = current_block['confirmations']
-                if block_info['confirmations']>=6 :
+                #to check validity of the block
+                if block_info['confirmations']>=6 : #if block is confirmed more than 5 times, block is valid
                     block_info['validity'] = "Valid Block"
                 else: 
                     block_info['validity'] = "Validity Waiting"
@@ -192,13 +192,14 @@ def GetUserTransactions(user_addr):
             temp_trans['status'] = trans['category'] 
             temp_trans['amount'] = '{:20f}'.format(trans['amount'])
             temp_trans['confirmations'] = trans['confirmations']
-            if temp_trans['confirmations'] >= 6:
+            #to check validity of the block
+            if temp_trans['confirmations'] >= 6: #if block is confirmed more than 5 times, block is valid
                 temp_trans['validity'] = "Valid Block"
             else: 
                 temp_trans['validity'] = "Validity Waiting"
             if "blockhash" in trans.keys():
                 temp_trans['block'] = trans['blockhash']
-            temp_trans['time'] = datetime.utcfromtimestamp(trans['time']).strftime('%Y-%m-%d %H:%M:%S')
+            temp_trans['time'] = datetime.utcfromtimestamp(trans['time']).strftime('%Y-%m-%d %H:%M:%S') # to change unix timestamp to utc time
             usr_transactions.append(temp_trans)
         return{"RESPONSE": "SUCCESS", "RESULT": usr_transactions}
     else:
